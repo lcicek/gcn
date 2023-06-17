@@ -2,7 +2,7 @@ from torch_geometric.datasets import TUDataset
 from torch_geometric.loader import DataLoader
 import torch
 
-from parameters import BATCH_SIZE, LEARNING_RATE, EPOCHS
+from parameters import BATCH_SIZE, LEARNING_RATE, EPOCHS, MODEL_PATH
 from nets import GCN
 from utility import prepareNodes, accuracy
 
@@ -40,3 +40,5 @@ for epoch in range(EPOCHS):
 
     if epoch % 10 == 0:
             print(f'Epoch {epoch:>3} | Loss: {loss:.2f} | Accuracy: {acc:.2f}')
+    
+torch.save(model.state_dict(), MODEL_PATH)
