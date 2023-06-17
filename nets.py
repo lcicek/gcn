@@ -3,13 +3,15 @@ from torch.nn import Sigmoid, LazyLinear
 from torch_geometric.nn import GCNConv, global_add_pool
 
 from parameters import P_THRESHOLD
+from utility import label, labelDistance
 
 class GCN(torch.nn.Module):
     def __init__(self):
         super().__init__()
 
         self.conv1 = GCNConv(136, 68)
-        self.conv2 = GCNConv(68, 6)
+        self.conv2 = GCNConv(68, 34)
+        self.conv3 = GCNConv(34, 17)
         self.lin = LazyLinear(3)
         self.lin2 = LazyLinear(1)
         self.pred = Sigmoid()
@@ -27,7 +29,8 @@ class GCN(torch.nn.Module):
     
     def evaluate(self, x, edge_index, batch):
         pred = self.forward(x=x, edge_index=edge_index, batch=batch)
-        pred[pred > P_THRESHOLD] = 1
-        pred[pred <= P_THRESHOLD] = 0
+        
+        label_dist = labelDistance(pred)
+        labels = label(pred)
 
-        return pred
+        return labels, label_dist

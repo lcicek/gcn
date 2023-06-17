@@ -1,9 +1,9 @@
-BATCH_SIZE = 10
+BATCH_SIZE = 50
 EPOCHS = 150
-LEARNING_RATE = 0.025
+LEARNING_RATE = 0.01
 
 P_THRESHOLD = 0.5 # probability threshold
 
-MODEL_PATH = f'saved-models/model-e150-lr025.pt'
+MODEL_PATH = f'saved-models/model.pt'
 
-TRAIN = False
+# LOAD = False
