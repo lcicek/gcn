@@ -1,6 +1,8 @@
 import torch
-from torch.nn import Sigmoid, Flatten, LazyLinear
+from torch.nn import Sigmoid, LazyLinear
 from torch_geometric.nn import GCNConv, global_add_pool
+
+from parameters import P_THRESHOLD
 
 class GCN(torch.nn.Module):
     def __init__(self):
@@ -22,3 +24,10 @@ class GCN(torch.nn.Module):
         y = self.pred(y)
 
         return y
+    
+    def evaluate(self, x, edge_index, batch):
+        pred = self.forward(x=x, edge_index=edge_index, batch=batch)
+        pred[pred > P_THRESHOLD] = 1
+        pred[pred <= P_THRESHOLD] = 0
+
+        return pred

@@ -35,6 +35,6 @@ def accuracy(loader, model):
     total_acc = 0
     for data in loader:
         # data = data.to(device)
-        pred = model(data.x, data.edge_index, data.batch)
+        pred = model.evaluate(data.x, data.edge_index, data.batch) 
         total_acc += int((pred == data.y).sum())
     return total_acc / len(loader.dataset)
