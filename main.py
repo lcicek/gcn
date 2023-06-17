@@ -2,11 +2,13 @@ from torch_geometric.datasets import TUDataset
 from torch_geometric.loader import DataLoader
 import torch
 
-from parameters import BATCH_SIZE, LEARNING_RATE
+from parameters import BATCH_SIZE, LEARNING_RATE, EPOCHS
 from nets import GCN
 from utility import prepareNodes, accuracy
 
-dataset = TUDataset("./", "IMDB-BINARY", use_node_attr=True)
+torch.manual_seed(12345)
+
+dataset = TUDataset("./", "IMDB-BINARY", use_node_attr=True).shuffle()
 prepareNodes(dataset)
 
 train_dataset = dataset[len(dataset) // 2:]
@@ -28,11 +30,11 @@ def train():
         loss.backward()
         optimizer.step()
 
-        total_loss += float(loss) * data.num_graphs
+        total_loss += loss
 
-    return total_loss / len(train_loader.dataset)
+    return total_loss
 
-for epoch in range(40):
+for epoch in range(EPOCHS):
     loss = train()
     acc = accuracy(train_loader, model)
 
