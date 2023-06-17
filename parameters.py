@@ -5,3 +5,5 @@ LEARNING_RATE = 0.025
 P_THRESHOLD = 0.5 # probability threshold
 
 MODEL_PATH = f'saved-models/model-e150-lr025.pt'
+
+TRAIN = False

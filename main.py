@@ -2,7 +2,7 @@ from torch_geometric.datasets import TUDataset
 from torch_geometric.loader import DataLoader
 import torch
 
-from parameters import BATCH_SIZE, LEARNING_RATE, EPOCHS, MODEL_PATH
+from parameters import BATCH_SIZE, LEARNING_RATE, EPOCHS, MODEL_PATH, TRAIN
 from nets import GCN
 from utility import prepareNodes, accuracy
 
@@ -14,10 +14,18 @@ prepareNodes(dataset)
 train_dataset = dataset[len(dataset) // 2:]
 train_loader = DataLoader(train_dataset, BATCH_SIZE, False)
 
+test_dataset = dataset[:len(dataset) // 2]
+test_loader = DataLoader(test_dataset, BATCH_SIZE, False)
+
 model = GCN()
 
 criterion = torch.nn.BCELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
+
+def test():
+    model.load_state_dict(torch.load(MODEL_PATH))
+    acc = accuracy(test_loader, model)
+    print(f'Accuracy: {acc:.2f}')
 
 def train():
     model.train()
@@ -34,11 +42,14 @@ def train():
 
     return total_loss
 
-for epoch in range(EPOCHS):
-    loss = train()
-    acc = accuracy(train_loader, model)
+if TRAIN:
+    for epoch in range(EPOCHS):
+        loss = train()
+        acc = accuracy(train_loader, model)
 
-    if epoch % 10 == 0:
-            print(f'Epoch {epoch:>3} | Loss: {loss:.2f} | Accuracy: {acc:.2f}')
-    
-torch.save(model.state_dict(), MODEL_PATH)
+        if epoch % 10 == 0:
+                print(f'Epoch {epoch:>3} | Loss: {loss:.2f} | Accuracy: {acc:.2f}')
+        
+    torch.save(model.state_dict(), MODEL_PATH)
+else:
+    test()
