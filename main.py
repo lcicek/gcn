@@ -4,17 +4,17 @@ import torch
 
 from parameters import BATCH_SIZE, LEARNING_RATE, EPOCHS, MODEL_PATH
 from nets import GCN
-from utility import prepareNodes, accuracy
+from utility import initializeNodes, accuracy
 
 torch.manual_seed(12345)
 
-dataset = TUDataset("./", "IMDB-BINARY", use_node_attr=True).shuffle()
-prepareNodes(dataset)
+dataset = TUDataset("./", "IMDB-BINARY").shuffle()
+initializeNodes(dataset)
 
 train_dataset = dataset[0:750] # should contain roughly equal amount of 0 and 1 labels since dataset was shuffled
 train_loader = DataLoader(train_dataset, BATCH_SIZE, shuffle=True)
 
-test_dataset = dataset[750:1000]
+test_dataset = dataset[751:1000]
 test_loader = DataLoader(test_dataset, BATCH_SIZE, False)
 
 model = GCN()

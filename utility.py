@@ -15,7 +15,7 @@ class NormalizedDegree:
         data.x = deg.view(-1, 1)
         return data
     
-def prepareNodes(dataset):
+def initializeNodes(dataset):
     if dataset.data.x is None:
         max_degree = 0
         degs = []
