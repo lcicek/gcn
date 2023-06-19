@@ -11,8 +11,8 @@ torch.manual_seed(12345)
 dataset = TUDataset("./", "IMDB-BINARY", use_node_attr=True).shuffle()
 prepareNodes(dataset)
 
-train_dataset = dataset[0:750]
-train_loader = DataLoader(train_dataset, BATCH_SIZE, False)
+train_dataset = dataset[0:750] # should contain roughly equal amount of 0 and 1 labels since dataset was shuffled
+train_loader = DataLoader(train_dataset, BATCH_SIZE, shuffle=True)
 
 test_dataset = dataset[750:1000]
 test_loader = DataLoader(test_dataset, BATCH_SIZE, False)
