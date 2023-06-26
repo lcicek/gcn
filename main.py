@@ -94,7 +94,7 @@ def evaluateModel():
         trainingLoop(model, train_loader, optimizer, log=False, save_model=False)
         avg += modelStats(model, test_loader, save=True)
 
-    avg /= 20
-    print(f"Average accuracy: {count}")
+    avg /= count
+    print(f"Average accuracy: {avg}")
 
 evaluateModel()
