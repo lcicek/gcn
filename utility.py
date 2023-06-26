@@ -67,3 +67,26 @@ def accuracy(loader, model):
     false_negatives /= len(loader.dataset)
 
     return total_acc, total_label_dist, false_positives, false_negatives
+
+def printWrongBalance(loader, model):
+    model.eval()
+
+    total_wrong = 0
+    sum_wrong = 0
+    for data in loader:
+        labels, _ = model.evaluate(data.x, data.edge_index, data.batch)
+
+        wrong = labels[labels != data.y]
+
+        total_wrong += len(wrong)
+        sum_wrong += int(wrong.sum())
+
+    print(f'wrong: zero({total_wrong - sum_wrong}), one({sum_wrong})')
+
+def printLabelBalance(loader):
+    sum = 0
+
+    for data in loader:
+        sum += int(data.y.sum())
+
+    print(f'Dataset training-graphs: zero({len(loader.dataset) - sum}), one({sum})')
