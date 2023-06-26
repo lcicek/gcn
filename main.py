@@ -6,28 +6,26 @@ from parameters import BATCH_SIZE, LEARNING_RATE, EPOCHS, MODEL_PATH
 from nets import GCN
 from utility import initializeNodes, accuracy, printLabelBalance, printWrongBalance
 
-# torch.manual_seed(12345)
 criterion = torch.nn.BCELoss()
 
 def loadDatasets():
-    dataset = TUDataset("./", "IMDB-BINARY").shuffle()
+    dataset = TUDataset("./", "IMDB-BINARY")
     initializeNodes(dataset)
 
-    train_dataset = dataset[0:700]
+    train_dataset = dataset[150:850]
     train_loader = DataLoader(train_dataset, BATCH_SIZE, shuffle=True)
-    printLabelBalance(train_loader)
+    printLabelBalance(train_loader) # assert that label balance is 350/350 
 
-    test_dataset = dataset[700:1000]
-    test_loader = DataLoader(test_dataset, BATCH_SIZE, False)
+    test_dataset = dataset[0:150] + dataset[850:1000]
+    test_loader = DataLoader(test_dataset, BATCH_SIZE, shuffle=False)
 
     return train_loader, test_loader
 
 def prepareTraining():
-    train_loader, test_loader = loadDatasets()
     model = GCN()
     optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
-    return train_loader, test_loader, model, optimizer
+    return model, optimizer
 
 def train(model, train_loader, optimizer):
     model.train()
@@ -74,20 +72,29 @@ def modelStats(model, test_loader, load=False, save=False):
     else:
         print(f'Model Accuracy: {acc:.2f} | LD: {label_dist:.2f} | FP: {fp:.2f} | FN: {fn:.2f}')
 
+    return acc
+
 # Regular training is performed, stats are logged and model is saved.
 def saveModel():
-    train_loader, test_loader, model, optimizer = prepareTraining()
+    train_loader, test_loader = loadDatasets()
+    model, optimizer = prepareTraining()
     trainingLoop(model, train_loader, optimizer)
     modelStats(model, test_loader)
 
 # In each iteration a new model is trained on the uniquely shuffled dataset and the accuracy is saved in 'info.txt'.
 def evaluateModel():
-    print("Evaluating model...")
-    for i in range(30):
-        train_loader, test_loader, model, optimizer = prepareTraining()
+    count = 20
+    train_loader, test_loader = loadDatasets()
+
+    avg = 0
+    for i in range(count):
+        model, optimizer = prepareTraining()
 
         print(f'Progress: {i}/30')
         trainingLoop(model, train_loader, optimizer, log=False, save_model=False)
-        modelStats(model, test_loader, save=True)
+        avg += modelStats(model, test_loader, save=True)
 
-saveModel()
+    avg /= 20
+    print(f"Average accuracy: {count}")
+
+evaluateModel()
