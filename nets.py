@@ -1,6 +1,6 @@
 import torch
-from torch.nn import Sigmoid, LazyLinear, Dropout
-from torch_geometric.nn import GCNConv, global_mean_pool
+from torch.nn import Sigmoid, Dropout
+from torch_geometric.nn import GCNConv, Linear, global_mean_pool
 
 from utility import label, labelDistance
 
@@ -8,11 +8,11 @@ class GCN(torch.nn.Module):
     def __init__(self):
         super().__init__()
 
-        self.conv = GCNConv(136, 50, improved=True)
-        self.conv2 = GCNConv(50, 50, improved=True)
-        self.lin = LazyLinear(1)
+        self.conv = GCNConv(136, 50)
+        self.conv2 = GCNConv(50, 50)
+        self.lin = Linear(50, 1)
         self.pred = Sigmoid()
-        self.drop = Dropout(0.2)
+        self.drop = Dropout(0.5)
 
     def forward(self, x, edge_index, batch):
         x = self.conv(x, edge_index).relu()

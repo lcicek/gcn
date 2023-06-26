@@ -1,5 +1,5 @@
 BATCH_SIZE = 50
-EPOCHS = 75
+EPOCHS = 50
 LEARNING_RATE = 0.02
 
 P_THRESHOLD = 0.5 # probability threshold

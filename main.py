@@ -45,9 +45,10 @@ def train(model, train_loader, optimizer):
 def trainingLoop(model, train_loader, optimizer, log=True, logExtended = False, save_model=True):
     for epoch in range(EPOCHS):
         loss = train(model, train_loader, optimizer)
-        acc, label_dist, fp, fn = accuracy(train_loader, model)
 
-        if log and epoch % 10 == 0:
+        if log and epoch % 5 == 0:
+                acc, label_dist, fp, fn = accuracy(train_loader, model)
+
                 info = f'Epoch {epoch:>3} | Loss: {loss:.2f} | Accuracy: {acc:.2f}' 
                 extended = f' | LD: {label_dist:.2f} | FP: {fp:.2f} | FN: {fn:.2f}'
 
@@ -83,18 +84,19 @@ def saveModel():
 
 # In each iteration a new model is trained on the uniquely shuffled dataset and the accuracy is saved in 'info.txt'.
 def evaluateModel():
-    count = 20
+    count = 10
     train_loader, test_loader = loadDatasets()
 
     avg = 0
     for i in range(count):
         model, optimizer = prepareTraining()
 
-        print(f'Progress: {i}/30')
+        print(f'Progress: {i}/{count}')
         trainingLoop(model, train_loader, optimizer, log=False, save_model=False)
         avg += modelStats(model, test_loader, save=True)
 
     avg /= count
     print(f"Average accuracy: {avg}")
 
-evaluateModel()
+# evaluateModel()
+saveModel()
