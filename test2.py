@@ -21,11 +21,11 @@ class central_node_graph:
             if i == 0:
                 self.x[i][num_nodes - 1] = 1 # central node has connection to all others
 
-                for j in range(i, num_nodes-1 + i):
+                for j in range(num_nodes-1):
                     start_nodes.append(i)
-                    end_nodes.append((j+1) % num_nodes)
+                    end_nodes.append((j+1))
             else:
-                self.x[i][degree] = 1 # 
+                self.x[i][degree] = 1
 
                 for j in range(degree):
                     start_nodes.append(i)
