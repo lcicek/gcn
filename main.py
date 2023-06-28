@@ -104,9 +104,7 @@ def evaluateModel():
     avg /= count
     print(f"Average accuracy: {avg}")
 
-def explain():
-    dataset = loadDataset()
-    data = dataset[0]
+def explain(data):
     model = GCN()
     model.load_state_dict(torch.load(MODEL_PATH))
     model.eval()
@@ -131,10 +129,15 @@ def explain():
     file.write(str(explanation.node_stores))
     file.close()
 
-    explanation.visualize_feature_importance(FEATURE_IMG_PATH, top_k=20)
+    explanation.visualize_feature_importance(FEATURE_IMG_PATH, top_k=10)
     explanation.visualize_graph(GRAPH_PATH)
+    print(f'prediction: {model(data.x, data.edge_index).item():.2f}')
+    # print(f'ground-truth: {data.y}')
 
 
 # evaluateModel()
 # saveModel()
-explain()
+#dataset = loadDataset()
+#data = dataset[973]
+
+#explain(data)
