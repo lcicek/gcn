@@ -3,7 +3,7 @@ from torch_geometric.datasets import TUDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.explain import Explainer, GNNExplainer
 
-from parameters import BATCH_SIZE, LEARNING_RATE, EPOCHS, MODEL_PATH
+from parameters import *
 from nets import GCN
 from utility import initializeNodes, accuracy, printLabelBalance, printWrongBalance
 
@@ -88,10 +88,6 @@ def saveModel():
     trainingLoop(model, train_loader, optimizer)
     modelStats(model, test_loader)
 
-    dataset = loadDataset()
-    data = dataset[0]
-    explain(model, data)
-
 # In each iteration a new model is trained on the uniquely shuffled dataset and the accuracy is saved in 'info.txt'.
 def evaluateModel():
     count = 10
@@ -108,12 +104,19 @@ def evaluateModel():
     avg /= count
     print(f"Average accuracy: {avg}")
 
-def explain(model, data):
+def explain():
+    dataset = loadDataset()
+    data = dataset[0]
+    model = GCN()
+    model.load_state_dict(torch.load(MODEL_PATH))
+    model.eval()
+
     explainer = Explainer(
         model=model,
         algorithm=GNNExplainer(epochs=EPOCHS),
         explanation_type='model',
         node_mask_type='attributes',
+        edge_mask_type='object',
         model_config=dict(
             mode='binary_classification',
             task_level='graph',
@@ -121,14 +124,17 @@ def explain(model, data):
         )
     )
 
-    explanation = explainer(data.x, data.edge_index)
-
     torch.set_printoptions(threshold=100_000)
+    explanation = explainer(data.x, data.edge_index)
 
     file = open("explanation.txt", "w")
     file.write(str(explanation.node_stores))
     file.close()
 
+    explanation.visualize_feature_importance(FEATURE_IMG_PATH, top_k=20)
+    explanation.visualize_graph(GRAPH_PATH)
+
 
 # evaluateModel()
-saveModel()
+# saveModel()
+explain()
