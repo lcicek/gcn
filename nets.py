@@ -14,10 +14,15 @@ class GCN(torch.nn.Module):
         self.pred = Sigmoid()
         self.drop = Dropout(0.5)
 
-    def forward(self, x, edge_index, batch):
+    def forward(self, x, edge_index, batch=None):
         x = self.conv(x, edge_index).relu()
         x = self.conv2(x, edge_index).relu()
-        x = global_mean_pool(x, batch) # readout layer
+
+        if batch is not None:
+            x = global_mean_pool(x, batch) # readout layer
+        else:
+            x = global_mean_pool(x, torch.zeros(len(x), dtype=torch.int64))
+
         x = self.drop(x) # regularization layer
         x = self.lin(x)
         x = self.pred(x).flatten()

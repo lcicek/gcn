@@ -1,6 +1,7 @@
 import torch
 from torch_geometric.datasets import TUDataset
 from torch_geometric.loader import DataLoader
+from torch_geometric.explain import Explainer, GNNExplainer
 
 from parameters import BATCH_SIZE, LEARNING_RATE, EPOCHS, MODEL_PATH
 from nets import GCN
@@ -8,10 +9,13 @@ from utility import initializeNodes, accuracy, printLabelBalance, printWrongBala
 
 criterion = torch.nn.BCELoss()
 
-def loadDatasets():
+def loadDataset():
     dataset = TUDataset("./", "IMDB-BINARY")
     initializeNodes(dataset)
 
+    return dataset
+
+def prepareLoaders(dataset):
     train_dataset = dataset[150:850]
     train_loader = DataLoader(train_dataset, BATCH_SIZE, shuffle=True)
     printLabelBalance(train_loader) # assert that label balance is 350/350 
@@ -77,15 +81,21 @@ def modelStats(model, test_loader, load=False, save=False):
 
 # Regular training is performed, stats are logged and model is saved.
 def saveModel():
-    train_loader, test_loader = loadDatasets()
+    dataset = loadDataset()
+    train_loader, test_loader = prepareLoaders(dataset)
     model, optimizer = prepareTraining()
+
     trainingLoop(model, train_loader, optimizer)
     modelStats(model, test_loader)
+
+    dataset = loadDataset()
+    data = dataset[0]
+    explain(model, data)
 
 # In each iteration a new model is trained on the uniquely shuffled dataset and the accuracy is saved in 'info.txt'.
 def evaluateModel():
     count = 10
-    train_loader, test_loader = loadDatasets()
+    train_loader, test_loader = prepareLoaders()
 
     avg = 0
     for i in range(count):
@@ -97,6 +107,28 @@ def evaluateModel():
 
     avg /= count
     print(f"Average accuracy: {avg}")
+
+def explain(model, data):
+    explainer = Explainer(
+        model=model,
+        algorithm=GNNExplainer(epochs=EPOCHS),
+        explanation_type='model',
+        node_mask_type='attributes',
+        model_config=dict(
+            mode='binary_classification',
+            task_level='graph',
+            return_type='probs',
+        )
+    )
+
+    explanation = explainer(data.x, data.edge_index)
+
+    torch.set_printoptions(threshold=100_000)
+
+    file = open("explanation.txt", "w")
+    file.write(str(explanation.node_stores))
+    file.close()
+
 
 # evaluateModel()
 saveModel()
