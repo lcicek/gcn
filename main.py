@@ -2,6 +2,7 @@ import torch
 from torch_geometric.datasets import TUDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.explain import Explainer, GNNExplainer
+from PIL import Image, ImageDraw, ImageFont
 
 from parameters import *
 from nets import GCN
@@ -66,7 +67,7 @@ def trainingLoop(model, train_loader, optimizer, log=True, logExtended = False, 
 
 def modelStats(model, test_loader, load=False, save=False):
     if load: 
-        model.load_state_dict(torch.load(MODEL_PATH))
+        model.load_state_dict(torch.load("final_model.pt"))
 
     acc, label_dist, fp, fn = accuracy(test_loader, model)
 
@@ -104,9 +105,9 @@ def evaluateModel():
     avg /= count
     print(f"Average accuracy: {avg}")
 
-def explain(data):
+def explain(data, visualize=True, save=False, name=None):
     model = GCN()
-    model.load_state_dict(torch.load(MODEL_PATH))
+    model.load_state_dict(torch.load("saved-models/final_model.pt"))
     model.eval()
 
     explainer = Explainer(
@@ -129,15 +130,32 @@ def explain(data):
     file.write(str(explanation.node_stores))
     file.close()
 
-    explanation.visualize_feature_importance(FEATURE_IMG_PATH, top_k=10)
-    explanation.visualize_graph(GRAPH_PATH)
-    print(f'prediction: {model(data.x, data.edge_index).item():.2f}')
+
+    pred = model(data.x, data.edge_index).item()
+
+    if visualize:
+        explanation.visualize_feature_importance(FEATURE_IMG_PATH, top_k=10)
+        if not save:
+            explanation.visualize_graph(GRAPH_PATH)
+        else:
+            path = f"{TEST_FOLDER}{name}-p{pred:.2f}.png"
+            explanation.visualize_graph(path)
+            img = Image.open(path)
+            draw = ImageDraw.Draw(img)
+            font = ImageFont.truetype("arial.ttf", 16)
+            draw.text((90, 400),f"pred: {pred:.2f}", (255, 0, 0), font=font)
+            img.save(path) # replace
+            
+    
+    print(f'pred: {pred:.2f}')
     # print(f'ground-truth: {data.y}')
 
 
-# evaluateModel()
-# saveModel()
-#dataset = loadDataset()
-#data = dataset[973]
-
-#explain(data)
+if __name__ == "__main__":
+    # evaluateModel()
+    saveModel()
+    
+    #dataset = loadDataset()
+    #for i in range(475, 525):
+    #    data = dataset[i]
+    #    explain(data, save=True, name=i)
