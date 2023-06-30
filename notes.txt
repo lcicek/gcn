@@ -1,3 +1,10 @@
+TLDR:
+Takeaways:
+1. Low cast [3-7] is a predictor for 1-label.
+2. High cast [22+] is likely a predictor for 0-label.
+3. Single movie graphs and single central node/actor graphs can be approximated easily.
+_____________________
+
 Observation:
 Predicting the value of graphs that contain just one movie, i.e. graphs where each
 actor is connected to each other actor, is straightforward:
@@ -86,3 +93,4 @@ But removing the central node and computing prediction of sg(5, 4, 1) yields:
 		approximation = 1 != 0.47 = pred
 
 Also: Unlike before, removing movies DOES affect the prediction.
+_______________________
