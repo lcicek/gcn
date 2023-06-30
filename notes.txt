@@ -74,7 +74,7 @@ weigh each movie equally to get the formula:
 	pred = 1/num_movies * (movie[cast1] + movie[cast2] + ...)
 	     = movie[cast]
 
-The second equality in the formula above is synonymous to deleting a movie:
+This formula confirms what can also be observed by deleting movies from a graph like this:
 Deleting a movie from a graph does not affect the prediction.
 ___________________
 Single_central_node_graphs with differing casts per movie can be approximated
