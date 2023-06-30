@@ -130,21 +130,23 @@ def explain(data, visualize=True, save=False, name=None):
     file.write(str(explanation.node_stores))
     file.close()
 
-
     pred = model(data.x, data.edge_index).item()
 
     if visualize:
         explanation.visualize_feature_importance(FEATURE_IMG_PATH, top_k=10)
         if not save:
-            explanation.visualize_graph(GRAPH_PATH)
+            path = GRAPH_PATH
         else:
             path = f"{TEST_FOLDER}{name}-p{pred:.2f}.png"
-            explanation.visualize_graph(path)
-            img = Image.open(path)
-            draw = ImageDraw.Draw(img)
-            font = ImageFont.truetype("arial.ttf", 16)
-            draw.text((90, 400),f"pred: {pred:.2f}", (255, 0, 0), font=font)
-            img.save(path) # replace
+        
+        explanation.visualize_graph(path)
+        img = Image.open(path)
+        draw = ImageDraw.Draw(img)
+        font = ImageFont.truetype("arial.ttf", 16)
+        draw.text((90, 400),f"pred: {pred:.2f}", (255, 0, 0), font=font)
+        if data.y is not None:
+            draw.text((90, 64),f"label: {data.y.item()}", (0, 0, 255), font=font)
+        img.save(path) # replace
             
     
     print(f'pred: {pred:.2f}')
