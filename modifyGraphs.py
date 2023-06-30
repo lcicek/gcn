@@ -48,8 +48,8 @@ class ModifyGraph:
 
         return degree_tensor.unsqueeze(0)
 
-    def updateVariables(self, val):
-        self.num_actors += val
+    def updateVariables(self, add_actors):
+        self.num_actors += add_actors
         self.num_edges = len(self.edges)
         self.num_movies = len(self.movies)
 
@@ -57,6 +57,40 @@ class ModifyGraph:
         degree = self.x[node].nonzero().item()
         self.x[node][degree+val] = 1
         self.x[node][degree] = 0
+    
+    def removeEdge(self, actor1, actor2): # removes edge between two actors
+        # UPDATE EDGES
+        keep_edges = []
+        for edge in self.edges:
+            if actor1 not in edge or actor2 not in edge:
+                keep_edges.append(edge.unsqueeze(0))
+
+        self.edges = torch.cat(keep_edges, dim=0)
+
+        # UPDATE MOVIES: 
+        # a removed edge means that a movie where actor1 and actor 2 appear, is now divided into two
+        # separate movies. the remaining cast has to be added to both of those new movies.
+        remove_movies = [movie for movie in self.movies if actor1 in movie and actor2 in movie]
+        
+        for movie in remove_movies:
+            movie1 = set([a for a in movie if a != actor1])
+            movie2 = set([a for a in movie if a != actor2])
+
+            # check for potential duplicates: e.g. given movies {0, 1, 3}, {0, 1, 2}
+            # if edge [1, 2] is removed, movies {0, 1}, {0, 3}, {0, 2}, {0, 3} would be added
+            if movie1 not in self.movies:
+                self.movies.append(movie1)
+            
+            if movie2 not in self.movies:
+                self.movies.append(movie2)
+
+            self.movies.remove(movie)
+
+        # UPDATE  INFO
+        self.updateEdgeIndex()
+        self.updateVariables(add_actors=0)
+        self.updateDegree(node=actor1, val=-1)
+        self.updateDegree(node=actor2, val=-1)
 
     def addActorsToMovie(self, add, actor, visualize=True, see_change=False, dir=None):
         assert (see_change and dir is not None) or (not see_change and dir is None)
@@ -86,7 +120,7 @@ class ModifyGraph:
                 self.x = torch.cat((self.x, self.createDegreeTensor(degree=len(movie)-1)), dim=0)
                 self.edges = torch.cat((self.edges, torch.tensor(new_edges)), dim=0)
                 self.updateEdgeIndex()
-                self.updateVariables(1)
+                self.updateVariables(add_actors=1)
 
                 break
 
@@ -152,32 +186,30 @@ class ModifyGraph:
         self.movies = [movie for movie in self.movies if len(movie) > 1] # make sure that there are no empty movies 
 
         # UPDATE VARIABLES
-        self.updateVariables(-1)
+        self.updateVariables(add_actors=-1)
 
 if __name__ == "__main__":
     torch.set_printoptions(threshold=100_000) # to be able to see full X during debugging
-    #graph = ModifyGraph(num_movies=5, cast=5, overlap=2)
-    #explain(graph)
 
     dataset = loadDataset()
-    graph = dataset[0] #sym_graph = symmetric_graph(num_movies=1, cast=30, overlap=0) 
+    graph = dataset[4]
     custom_graph = ModifyGraph(graph)
 
-    see_change = False
+    see_change = True
     if see_change:
         # CHANGE:
-        #dir = createNewTestDirectory()
-        custom_graph.addActorsToMovie(add=20, actor=7, see_change=True, dir=dir)
-        #explain(custom_graph, see_change=True)
-    else:
-        custom_graph.removeActors([15, 13, 7, 10, 9, 5, 4, 0])
-        custom_graph.removeActors([1, 3, 6])
-        custom_graph.addActorToMovie(0)
-        custom_graph.addActorToMovie(0)
-        custom_graph.addActorToMovie(0)
-        custom_graph.addActorToMovie(0)
-        custom_graph.addActorToMovie(0)
-        custom_graph.addActorToMovie(0)
-        custom_graph.addActorToMovie(0)
+        dir = createNewTestDirectory()
 
+        explain(custom_graph, see_change=True, dir=dir)
+        custom_graph.removeEdge(11, 13)
+        explain(custom_graph, see_change=True, dir=dir)
+        custom_graph.removeEdge(6, 8)
+        explain(custom_graph, see_change=True, dir=dir)
+        custom_graph.removeEdge(3, 4)
+        explain(custom_graph, see_change=True, dir=dir)
+        custom_graph.removeEdge(1, 10)
+        explain(custom_graph, see_change=True, dir=dir)
+
+    else:
         explain(custom_graph)
+        print(custom_graph.movies)
