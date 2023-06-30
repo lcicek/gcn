@@ -6,33 +6,27 @@ import copy
 
 # TEST-CASES:
 graphs = []
+approximate = False
 
-graph = ModifyGraph(SymmetricGraph(3, 8, 1))
+graph = ModifyGraph(SymmetricGraph(2, 4, 1))
+graphs.append(graph)
+explain(graph)
+print(graph.movies)
 
-graph.addActorsToMovie(1, 1, visualize=False)
-graphs.append(copy.deepcopy(graph))
-graph.addActorsToMovie(2, 8, visualize=False)
-graphs.append(copy.deepcopy(graph))
-graph.addActorsToMovie(3, 15, visualize=False)
-graphs.append(copy.deepcopy(graph))
-graph.addActorsToMovie(4, 22, visualize=False)
-graphs.append(copy.deepcopy(graph))
+if approximate:
+    for graph in graphs:
+        pred = model(graph.x, graph.edge_index).item()
 
-explain(graphs[3])
+        approximation = 0
+        for m in graph.movies:
+            degree = len(m)-1
+            approximation += movie[degree]
 
-for graph in graphs:
-    pred = model(graph.x, graph.edge_index).item()
+        approximation /= (len(graph.movies))
 
-    approximation = 0
-    for m in graph.movies:
-        degree = len(m)-1
-        approximation += movie[degree]
-
-    approximation /=  (len(graph.movies))
-
-    print(f"predict = {pred}")
-    print(f"approx  = {approximation}")
-    print("------------")
+        print(f"predict = {pred}")
+        print(f"approx  = {approximation}")
+        print("------------")
 
 """
 graphs.append(sg(4, 3, 1))
