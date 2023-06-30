@@ -26,13 +26,18 @@ Corresponding movies:
 
 Conclusion:
 Removing an edge from a graph not only increases the amount of movies in the
-graph but also increases the distance between nodes. Because of this, previously
-clear clusters become spread apart and entangled. This causes a readability
-issue in both the visualized clusters as well as the implicit movies of the graph.
-Thus, this graph feature can be referred to as "messiness".
-
-Interpretation:
-
+graph but also increases the distance between nodes. If there are a lot of nodes in 
+the graph (15+ or so), previously clear clusters become spread apart and entangled.
+This causes a readability issue in both the visualized clusters as well as the implicit movies
+of the graph. This graph feature can be referred to as "messiness".
 
 Hypothesis:
 Messiness is a predictor for 0-graphs.
+
+Explanation:
+Messiness implies that there is a sizeable overlap of actors within different movies.
+It also implies a higher number of actors per movie since movies with small casts cannot be messy. 
+In that sense, the messiness feature is closely connected to the size-of-cast feature hypothesized
+before.
+It's also worth noting that just looking through the visualized graphs, shows that
+1-label graphs are quite clean and 0-label graphs are quite messy.
