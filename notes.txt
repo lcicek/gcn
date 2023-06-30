@@ -50,7 +50,7 @@ In the range [21+] the model is fairly certain again, i.e. a high cast indicates
 0-label.
 In the remaining range there is a lot of variance, but the prediction is rarely 
 around 0.5. This indicates that during training, the model could have seen one or two
-instances where movies with cast, say 13 or 16, and inferred that movies with a cast
+instances of movies with cast, say 13 or 16, and inferred that movies with a cast
 of that size must have the label 1 (and vice versa). These inferences are likely inaccurate,
 for which the small size of the dataset could be at fault.
 _____________________
