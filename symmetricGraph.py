@@ -1,6 +1,6 @@
 from main import *
 
-class symmetricGraph:
+class SymmetricGraph:
     def __init__(self, num_movies=4, cast=3, overlap=1): # cast includes overlap actors!
         assert num_movies * cast < 136 # don't exceed degree limit found in IMDB-BINARY
         

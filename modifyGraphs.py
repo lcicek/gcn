@@ -1,6 +1,6 @@
 from main import *
 
-class CustomGraph:
+class ModifyGraph:
     def __init__(self, graph):
         self.x = graph.x
         self.y = graph.y
@@ -58,10 +58,11 @@ class CustomGraph:
         self.x[node][degree+val] = 1
         self.x[node][degree] = 0
 
-    def addActorsToMovie(self, add, actor, see_change=False, dir=None):
+    def addActorsToMovie(self, add, actor, visualize=True, see_change=False, dir=None):
         assert (see_change and dir is not None) or (not see_change and dir is None)
 
-        explain(self, see_change=see_change, dir=dir) # if see_change=false, just regular save; if true, then save starting graph
+        if visualize:
+            explain(self, see_change=see_change, dir=dir) # if see_change=false, just regular save; if true, then save starting graph
 
         for _ in range(add):
             self.addActorToMovie(actor)
@@ -153,29 +154,30 @@ class CustomGraph:
         # UPDATE VARIABLES
         self.updateVariables(-1)
 
-torch.set_printoptions(threshold=100_000) # to be able to see full X during debugging
-#graph = CustomGraph(num_movies=5, cast=5, overlap=2)
-#explain(graph)
+if __name__ == "__main__":
+    torch.set_printoptions(threshold=100_000) # to be able to see full X during debugging
+    #graph = ModifyGraph(num_movies=5, cast=5, overlap=2)
+    #explain(graph)
 
-dataset = loadDataset()
-graph = dataset[0] #sym_graph = symmetric_graph(num_movies=1, cast=30, overlap=0) 
-custom_graph = CustomGraph(graph)
+    dataset = loadDataset()
+    graph = dataset[0] #sym_graph = symmetric_graph(num_movies=1, cast=30, overlap=0) 
+    custom_graph = ModifyGraph(graph)
 
-see_change = False
-if see_change:
-    dir = createNewTestDirectory()
-    #custom_graph.addActorsToMovie(add=20, actor=7, see_change=True, dir=dir)
-    custom_graph.removeActors([15, 13, 7, 10, 9, 5, 4, 0])
-    custom_graph.removeActors([1, 3, 6])
-    custom_graph.addActorToMovie(0)
-    custom_graph.addActorToMovie(0)
-    custom_graph.addActorToMovie(0)
-    custom_graph.addActorToMovie(0)
-    custom_graph.addActorToMovie(0)
-    custom_graph.addActorToMovie(0)
-    custom_graph.addActorToMovie(0)
+    see_change = False
+    if see_change:
+        # CHANGE:
+        #dir = createNewTestDirectory()
+        custom_graph.addActorsToMovie(add=20, actor=7, see_change=True, dir=dir)
+        #explain(custom_graph, see_change=True)
+    else:
+        custom_graph.removeActors([15, 13, 7, 10, 9, 5, 4, 0])
+        custom_graph.removeActors([1, 3, 6])
+        custom_graph.addActorToMovie(0)
+        custom_graph.addActorToMovie(0)
+        custom_graph.addActorToMovie(0)
+        custom_graph.addActorToMovie(0)
+        custom_graph.addActorToMovie(0)
+        custom_graph.addActorToMovie(0)
+        custom_graph.addActorToMovie(0)
 
-    explain(custom_graph)
-    #custom_graph.removeActors([])
-else:
-    explain(custom_graph)
+        explain(custom_graph)
