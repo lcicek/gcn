@@ -1,20 +1,11 @@
 import torch
-from torch_geometric.datasets import TUDataset
 from torch_geometric.loader import DataLoader
-from torch_geometric.explain import Explainer, GNNExplainer
-from PIL import Image, ImageDraw, ImageFont
 
-from parameters import *
 from nets import GCN
-from utility import initializeNodes, accuracy, printLabelBalance, printWrongBalance
+from parameters import *
+from utility import *
 
 criterion = torch.nn.BCELoss()
-
-def loadDataset():
-    dataset = TUDataset("./", "IMDB-BINARY")
-    initializeNodes(dataset)
-
-    return dataset
 
 def prepareLoaders(dataset):
     train_dataset = dataset[150:850]
@@ -105,59 +96,11 @@ def evaluateModel():
     avg /= count
     print(f"Average accuracy: {avg}")
 
-def explain(data, visualize=True, save=False, name=None):
-    model = GCN()
-    model.load_state_dict(torch.load("saved-models/final_model.pt"))
-    model.eval()
-
-    explainer = Explainer(
-        model=model,
-        algorithm=GNNExplainer(epochs=EPOCHS),
-        explanation_type='model',
-        node_mask_type='attributes',
-        edge_mask_type='object',
-        model_config=dict(
-            mode='binary_classification',
-            task_level='graph',
-            return_type='probs',
-        )
-    )
-
-    torch.set_printoptions(threshold=100_000)
-    explanation = explainer(data.x, data.edge_index)
-
-    file = open("explanation.txt", "w")
-    file.write(str(explanation.node_stores))
-    file.close()
-
-    pred = model(data.x, data.edge_index).item()
-
-    if visualize:
-        explanation.visualize_feature_importance(FEATURE_IMG_PATH, top_k=10)
-        if not save:
-            path = GRAPH_PATH
-        else:
-            path = f"{TEST_FOLDER}{name}-p{pred:.2f}.png"
-        
-        explanation.visualize_graph(path)
-        img = Image.open(path)
-        draw = ImageDraw.Draw(img)
-        font = ImageFont.truetype("arial.ttf", 16)
-        draw.text((90, 400),f"pred: {pred:.2f}", (255, 0, 0), font=font)
-        if data.y is not None:
-            draw.text((90, 64),f"label: {data.y.item()}", (0, 0, 255), font=font)
-        img.save(path) # replace
-            
-    
-    print(f'pred: {pred:.2f}')
-    # print(f'ground-truth: {data.y}')
-
-
 if __name__ == "__main__":
     # evaluateModel()
-    saveModel()
+    # saveModel()
     
-    #dataset = loadDataset()
-    #for i in range(475, 525):
-    #    data = dataset[i]
-    #    explain(data, save=True, name=i)
+    dataset = loadDataset()
+    for i in range(475, 525):
+        data = dataset[i]
+        explain(data)

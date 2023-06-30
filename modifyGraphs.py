@@ -1,4 +1,5 @@
 from main import *
+from createGraphs import symmetric_graph 
 
 class CustomGraph:
     def __init__(self, graph):
@@ -58,10 +59,20 @@ class CustomGraph:
         self.x[node][degree+val] = 1
         self.x[node][degree] = 0
 
+    def addActorsToMovie(self, add, actor, see_change=False, dir=None):
+        assert (see_change and dir is not None) or (not see_change and dir is None)
+
+        explain(self, see_change=see_change, dir=dir) # if see_change=false, just regular save; if true, then save starting graph
+
+        for _ in range(add):
+            self.addActorToMovie(actor)
+            if see_change:
+                explain(self, see_change=True, dir=dir)
+
     def addActorToMovie(self, actor): # finds the actor's movie and adds a new actor        
         new_actor = self.num_actors
         
-        for i, movie in enumerate(self.movies):
+        for movie in self.movies:
             if actor in movie:
                 movie.add(new_actor)
 
@@ -79,6 +90,18 @@ class CustomGraph:
 
                 break
 
+    def removeActors(self, actors, see_change=False, dir=None):
+        assert (see_change and dir is not None) or (not see_change and dir is None)
+
+        explain(self, see_change=see_change, dir=dir) # if see_change=false, just regular save; if true, then save starting graph
+
+        # make sure list of actors is descending, since removing actors messes with the indices
+        actors.sort(reverse=True)
+        for actor in actors:
+            self.removeActor(actor)
+            if see_change:
+                explain(self, see_change=True, dir=dir)
+
     def removeLastActor(self):
         self.removeActor(len(self.x) - 1)
 
@@ -87,14 +110,14 @@ class CustomGraph:
         keep_edges = []
         connected = set() # all the nodes node is connected to
         for edge in self.edges:
-            if actor not in edge: # test if true
+            if actor not in edge:
                 keep_edges.append(edge.unsqueeze(0))
             else:
                 connected.add(edge[0].item() if edge[0] != actor else edge[1].item())
 
         self.edges = torch.cat(keep_edges, dim=0)
 
-        # UPDATE INDICES GREATER THAN NODE
+        # UPDATE INDICES GREATER THAN ACTOR
         self.edges[self.edges > actor] -= 1
 
         # UPDATE X
@@ -112,20 +135,39 @@ class CustomGraph:
         for movie in self.movies:
             if actor in movie:
                 movie.remove(actor)
-            
-        self.movies = [movie for movie in self.movies if movie != {}] # make sure that there are no empty movies 
+
+        # UPDATE ACTOR'S VALUES
+        for i in range(len(self.movies)):
+            movie = self.movies[i]
+            updated_movie = set()
+            for a in movie:
+                if a > actor:
+                    updated_movie.add(a-1)
+                else:
+                    updated_movie.add(a)
+
+            self.movies[i] = updated_movie
+
+
+        self.movies = [movie for movie in self.movies if len(movie) > 1] # make sure that there are no empty movies 
 
         # UPDATE VARIABLES
         self.updateVariables(-1)
-
 
 torch.set_printoptions(threshold=100_000) # to be able to see full X during debugging
 #graph = CustomGraph(num_movies=5, cast=5, overlap=2)
 #explain(graph)
 
 dataset = loadDataset()
-graph = dataset[0]
-# explain(graph)
+graph = dataset[0] #sym_graph = symmetric_graph(num_movies=1, cast=30, overlap=0) 
 custom_graph = CustomGraph(graph)
-custom_graph.addActorToMovie(7)
-explain(custom_graph)
+
+see_change = False
+if see_change:
+    dir = createNewTestDirectory()
+    #custom_graph.addActorsToMovie(add=20, actor=7, see_change=True, dir=dir)
+    custom_graph.removeActors(list(range(29, 1, -1)), see_change=True, dir=dir)
+else:
+    custom_graph.removeActors([15, 13, 10, 9, 7, 5, 4, 0])
+    explain(custom_graph)
+    print(custom_graph.movies)
