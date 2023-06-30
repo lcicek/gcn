@@ -77,9 +77,9 @@ weigh each movie equally to get the formula:
 The second equality in the formula above is synonymous to deleting a movie:
 Deleting a movie from a graph does not affect the prediction.
 ___________________
-Single_central_node_graphs with differing casts per movie can be approximated
-adequately with the same function but fall short in a few cases where the prediction
-is very close to zero.
+Single_central_node_graphs with differing casts per movie can be very roughly
+approximated with the same function but fall short in a lot of cases. This makes
+sense as the problem to solve isn't as simple as the equation mentioned above.
 ___________________
 Two+_central_node_graphs (i.e. two actors appear together in movies with other
 completely new actors) operate differently:
@@ -94,3 +94,9 @@ But removing the central node and computing prediction of sg(5, 4, 1) yields:
 
 Also: Unlike before, removing movies DOES affect the prediction.
 _______________________
+
+Given a graph similar to a single_central_node_graph and containing three different movies
+with cast sizes in range small (1), medium (0.5) and high (0): 
+Decreasing the size of the medium cast movie to be in range small pushes the prediction
+towards 1. Decreasing this new small movie even further to a cast of size 1, 0 reverses
+this effect, as the decreased movie is now too small to be relevant.

@@ -1,0 +1,38 @@
+Observation:
+Removing an edge between two actors from the graph signifies that the two actors
+are not in the same movie.
+
+Example:
+Given a movie consisting of actors {0, 1, 3} and removing the edge between actors
+0 and 3 results in the new movies: {0, 1} and {1, 3}.
+
+Conclusion:
+Removing an edge from a graph increases the amount of movies in the graph.
+
+Another Observation:
+The GNNExplainer's visualizations cluster actors in the same movie closer together,
+i.e. clusters of actors represent movies. As edges are removed from the graph,
+the two actors/nodes belonging to the removed edge will be pushed farther apart.
+
+Example:
+Graph:                                                                   2
+    0 1                               2                                 
+   2   3  => remove edge[0, 1] => 0   3   1 => remove edge [2, 3] => 0   4   1
+     4                                4
+                                                                         3
+
+Corresponding movies:
+{0, 1, 2, 3, 4} => {0, 2, 3, 4}, {1, 2, 3, 4} =>  {0, 2, 4}, {0, 3, 4}, {1, 2, 4}, {1, 3, 4}
+
+Conclusion:
+Removing an edge from a graph not only increases the amount of movies in the
+graph but also increases the distance between nodes. Because of this, previously
+clear clusters become spread apart and entangled. This causes a readability
+issue in both the visualized clusters as well as the implicit movies of the graph.
+Thus, this graph feature can be referred to as "messiness".
+
+Interpretation:
+
+
+Hypothesis:
+Messiness is a predictor for 0-graphs.
