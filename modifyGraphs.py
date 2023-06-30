@@ -1,5 +1,4 @@
 from main import *
-from createGraphs import symmetric_graph 
 
 class CustomGraph:
     def __init__(self, graph):
@@ -166,8 +165,17 @@ see_change = False
 if see_change:
     dir = createNewTestDirectory()
     #custom_graph.addActorsToMovie(add=20, actor=7, see_change=True, dir=dir)
-    custom_graph.removeActors(list(range(29, 1, -1)), see_change=True, dir=dir)
-else:
-    custom_graph.removeActors([15, 13, 10, 9, 7, 5, 4, 0])
+    custom_graph.removeActors([15, 13, 7, 10, 9, 5, 4, 0])
+    custom_graph.removeActors([1, 3, 6])
+    custom_graph.addActorToMovie(0)
+    custom_graph.addActorToMovie(0)
+    custom_graph.addActorToMovie(0)
+    custom_graph.addActorToMovie(0)
+    custom_graph.addActorToMovie(0)
+    custom_graph.addActorToMovie(0)
+    custom_graph.addActorToMovie(0)
+
     explain(custom_graph)
-    print(custom_graph.movies)
+    #custom_graph.removeActors([])
+else:
+    explain(custom_graph)
