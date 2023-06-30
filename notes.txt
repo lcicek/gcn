@@ -1,0 +1,88 @@
+Observation:
+Predicting the value of graphs that contain just one movie, i.e. graphs where each
+actor is connected to each other actor, is straightforward:
+
+In single movie graphs, the graphs contain no information other than the size of the
+cast. Thus, given a value for cast, the model simply outputs the following values:
+_______________________
+Table of single-movie cast predictions (left: cast value, right: pred):
+30: 1.00
+29: 0.00
+28: 1.00
+27: 1.00
+26: 1.00
+25: 1.00
+24: 1.00
+23: 1.00
+22: 0.00
+21: 1.00
+20: 0.00
+19: 0.53
+18: 0.00
+17: 0.00
+16: 1.00
+15: 0.67
+14: 0.00
+13: 1.00
+12: 0.08
+11: 0.27
+10: 0.98
+9: 0.38
+8: 0.49
+7: 0.84
+6: 0.98
+5: 1.00
+4: 1.00
+3: 1.00
+2: 0.00
+_____________________
+
+In the range [3-7] the model is fairly certain about its prediction, i.e. a low cast
+indicates a 1-label.
+In the range [21+] the model is fairly certain again, i.e. a high cast indicates a 
+0-label.
+In the remaining nodes there is a lot of variance, but the prediction is rarely 
+around 0.5. This indicates that during training, the model could have seen one or two
+instances where movies with cast, say 13 or 16, and inferred that movies with a cast
+of that size must have the label 1 (and vice versa). These inferences are likely inaccurate,
+for which the small size of the dataset could be at fault.
+_____________________
+
+Single_central_node_graphs (i.e a graph with one actor who appears in several movies with
+other completely new actors) operate like the following:
+Each movie with a fixed cast (degree+1) has a pre-defined value:
+E.g.:    
+    movie[4] = 1
+    movie[6] = 0.98
+
+The model seems to make its prediction by computing
+
+        pred = c1 * movie[cast1] + c2 * movie[cast2] + ...
+
+where ci is some constant that weighs each movie.
+
+Since in symmetric graphs, each model has the same cast we can
+weigh each movie equally to get the formula:
+
+	pred = 1/num_movies * (movie[cast1] + movie[cast2] + ...)
+	     = movie[cast]
+
+The second equality in the formula above is synonymous to deleting a movie:
+Deleting a movie from a graph does not affect the prediction.
+___________________
+Single_central_node_graphs with differing casts per movie can be approximated
+adequately with the same function but fall short in a few cases where the prediction
+is very close to zero.
+___________________
+Two+_central_node_graphs (i.e. two actors appear together in movies with other
+completely new actors) operate differently:
+Example: Graph(num_movies=5, cast=5, overlap=2) (i.e. 2 actors appear in 5 movies where
+the cast is of size 5 (or size 3 without the 2 actors))
+
+Graph(5, 5, 2) has prediction: pred = 0.47 (calculated by the model)
+
+But removing the central node and computing prediction of sg(5, 4, 1) yields:
+		
+		approximation = 1 != 0.47 = pred
+
+Also: Unlike before, removing movies DOES affect the prediction.
