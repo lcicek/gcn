@@ -8,7 +8,7 @@ Fixed number of movies but increasing cast:
     | Cast | Pred |
     ______________
     | 2-6 |   1   | 
-    | 7+  |  0.5  | (pred is technically 0 or 1 only but at a rate of about 0.5)
+    | 7+  |   ?   |
     ______________
 
 Interpretation:
@@ -47,32 +47,26 @@ class CustomGraph:
                         self.end_nodes.append(target)
         
         self.updateEdgeIndex()
-        self.y = 0
+        self.y = None
 
     def updateEdgeIndex(self):
         self.edge_index = torch.tensor([self.start_nodes, self.end_nodes])
 
-    def addNodes(self, start, end):
-        self.start_nodes.extend(start)
-        self.end_nodes.extend(end)
-
-        self.updateEdgeIndex()
+    def removeLastNode(self):
+        self.removeNode(len(self.x)-1)
 
     def removeNode(self, node):
         delete_indices = []
+        connected_nodes = set() # every node that has a connection to the removed node
         
         for i in range(len(self.start_nodes)):
             if self.start_nodes[i] == node or self.end_nodes[i] == node:
                 delete_indices.append(i) # remember edge to delete
 
-                if self.start_nodes[i] == node: # degree of target has to be decremented
-                    target = self.end_nodes[i] 
+                if self.start_nodes[i] == node: # degree of connected node has to be decremented
+                    connected_nodes.add(self.end_nodes[i])
                 else:
-                    target = self.start_nodes[i]
-
-                degree = self.x[target].nonzero().item() # decrement degree
-                self.x[target][degree-1] = 1
-                self.x[target][degree] = 0
+                    connected_nodes.add(self.start_nodes[i])
 
         delete_indices.reverse()
         for i in delete_indices: # delete edge
@@ -91,18 +85,45 @@ class CustomGraph:
         self.updateEdgeIndex()
 
         # update x
+        for c_node in connected_nodes:
+            degree = self.x[c_node].nonzero().item() # decrement degree
+            self.x[c_node][degree-1] = 1
+            self.x[c_node][degree] = 0
+
+        # remove node from x
         keep_indices = list(range(0, len(self.x)))
         keep_indices.remove(node)
         self.x = self.x[keep_indices]
     
-    def overwrite(self, x, edge_index):
+    def overwrite(self, x, edge_index, y):
         self.x = x
-        self.start_nodes = edge_index[0]
-        self.start_nodes = edge_index[1]
+        self.start_nodes = edge_index[0].tolist()
+        self.end_nodes = edge_index[1].tolist()
         self.edge_index = edge_index
+        self.y = y
 
-print("Testing custom graph containing num_nodes // degree movies and central actor/node:")
-num_movies = 3
-degree = 6
-graph = CustomGraph(num_nodes=num_movies*degree+1, degree=degree)
+dataset = loadDataset()
+data = dataset[17]
+graph = CustomGraph()
+graph.overwrite(data.x, data.edge_index, data.y)
+removeNodes = [] # has to be descending
+if len(removeNodes) == 0:
+    explain(graph)
+else:
+    explain(graph, save=True, name=0)
+    for i, node in enumerate(removeNodes):
+        graph.removeNode(node)
+        explain(graph, save=True, name=i+1)
 
+"""
+num_movies = 5
+cast = 5
+# Remove nodes/movies
+graph = CustomGraph(num_nodes=num_movies*cast+1, degree=cast)
+explain(graph, save=True, name=0)
+
+for i in range((num_movies-1) * cast):
+        graph.removeLastNode()
+        #if i % cast == 0: # to just show the movie reductions
+        explain(graph, save=True, name=i+1) 
+"""
