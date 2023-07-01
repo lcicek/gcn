@@ -5,25 +5,27 @@ Single movie graphs have a fixed prediction every time. We can precompute these 
 In this file we simply compute the predictions of all single movies (with the size of the cast ranging from 1 to 136).
 The list "movie" contains the following values:
 
-1: 0.00
-2: 0.27
-3: 0.00
+0: 0.00
+1: 0.27
+2: 0.00
+3: 1.00
 4: 1.00
 5: 1.00
-6: 1.00
-7: 0.98
-8: 0.84
+6: 0.98
+7: 0.84
+8: 0.49
 ...
-53: 0.00
-54: 0.03
+53: 0.03
+54: 0.00
 55: 0.00
 56: 0.00
 ...
-132: 0.00
-133: 0.37
-134: 0.01
-135: 0.21
-136: 0.03
+130: 0.07
+131: 0.00
+132: 0.37
+133: 0.01
+134: 0.21
+135: 0.03
 """
 
 from symmetricGraph import SymmetricGraph
@@ -32,7 +34,7 @@ from utility import loadModel
 def printFullMovie():
     """Prints all values in movie (as seen above)."""
 
-    count = 1
+    count = 0
     for m in movie:
         print(f"{count}: {m:.2f}")
         count += 1
