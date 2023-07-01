@@ -1,5 +1,5 @@
 from utility import loadDataset, loadModel
-from modifyGraph import ModifyGraph
+from graph import Graph
 from calculateMovie import movie
 
 def calculateApproximation(graph, label=False):
@@ -95,7 +95,7 @@ def datasetApproximationAccuracy(graphs):
     for graph in graphs:
         ground_truth = graph.y
 
-        graph = ModifyGraph(graph)
+        graph = Graph(graph)
         approx = calculateApproximation(graph, label=True)
 
         accuracy += (ground_truth == approx).int()
@@ -120,7 +120,7 @@ def calculateAccuracy(graphs, model, tolerance, label=False):
         else:
             pred = model(graph.x, graph.edge_index).item() # returns the prediction between 0 and 1
 
-        graph = ModifyGraph(graph)
+        graph = Graph(graph)
         approx = calculateApproximation(graph, label=label)
 
         correct_approx = 1 if abs(pred - approx) <= tolerance else 0

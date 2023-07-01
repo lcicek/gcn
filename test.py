@@ -1,5 +1,5 @@
 from symmetricGraph import SymmetricGraph
-from modifyGraph import ModifyGraph
+from graph import Graph
 from utility import loadDataset, explain, createNewImageDirectory
 
 """ This file is intended to be used for custom testing:
@@ -18,8 +18,8 @@ graph1 = dataset[0]
 # Or create own symmetric graph:
 graph2 = SymmetricGraph(2, 5, 1)
 
-# Then create a ModifyGraph of a graph of your choice:
-graph = ModifyGraph(graph2)
+# Then create a Graph of a graph of your choice:
+graph = Graph(graph2)
 
 #########################
 # 2. VISUALIZE THE GRAPH (under "images/graph.png")
