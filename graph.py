@@ -1,15 +1,15 @@
 import torch
 from utility import explain
 
-class ModifyGraph:
-    """ The ModifyGraph class can be used to remove actors or edges between actors from an IMDB-BINARY graph.
+class Graph:
+    """ The Graph class can be used to remove actors or edges between actors from an IMDB-BINARY graph.
         The previously implicit movies in the graph can also be accessed directly and actors can be added to
         movies.
 
-        Instantiation is simple and all functions and attributes can be accessed after initializing the ModifyGraph.
+        Instantiation is simple and all functions and attributes can be accessed after initializing the Graph.
         E.g.:
             graph = dataset[0] # the first graph from IMDB-Binary
-            new_graph = ModifyGraph(graph)
+            new_graph = Graph(graph)
             new_graph.removeEdge(1, 2)
     """
 
