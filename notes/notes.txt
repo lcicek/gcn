@@ -1,24 +1,25 @@
 TLDR:
 Takeaways:
 1. Low cast [3-7] is a predictor for 1-label.
-2. High cast [22+] is likely a predictor for 0-label.
-3. Single movie graphs and single central node/actor graphs can be approximated easily.
+2. High cast [50+] is a predictor for 0-label.
+3. Medium cast [8-50] has a lot of variance but it has a tendency to 1-label.
+4. Single movie graph predictions can be computed correctly.
+5. Single central node graphs with movies that all have the same cast can be computed fully.
+6. Single central node graphs with differing cast sizes can be approximated very roughly.
 _____________________
 
 Observation:
 Predicting the value of graphs that contain just one movie, i.e. graphs where each
 actor is connected to each other actor, is straightforward:
-
 In single movie graphs, the graphs contain no information other than the size of the
-cast. Thus, given a value for cast, the model simply outputs the following values:
-_______________________
-See: calculateMovie.py
+cast. Thus, given a fixed value for the cast, the model outputs a fixed prediction (see
+calculateMovie.py):
 
-In the range [3-7] the model is fairly certain about its prediction, i.e. a low cast
+- In the range [3-7] the model is fairly certain about its prediction, i.e. a low cast
 indicates a 1-label.
-In the range [50+] the model is fairly certain again, i.e. a high cast indicates a 
+- In the range [50+] the model is fairly certain again, i.e. a high cast indicates a 
 0-label.
-In the range [7-50]  there is a lot of variance but the tendency is towards label 1.
+- In the range [7-50] there is a lot of variance but the tendency is towards label 1.
 _____________________
 
 Single_central_node_graphs (i.e a graph with one actor who appears in several movies with
@@ -28,14 +29,14 @@ E.g.:
     movie[4] = 1
     movie[6] = 0.98
 
-The model seems to make its prediction by computing
+In general, the model seems to make its prediction by computing
 
         pred = c1 * movie[cast1] + c2 * movie[cast2] + ...
 
 where ci is some constant that weighs each movie.
 
-Since in symmetric graphs, each model has the same cast we can
-weigh each movie equally to get the formula:
+Since in symmetric graphs each model has the same cast, we can weigh each movie equally to
+get the formula:
 
 	pred = 1/num_movies * (movie[cast1] + movie[cast2] + ...)
 	     = movie[cast]

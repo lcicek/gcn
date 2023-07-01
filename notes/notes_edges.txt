@@ -32,12 +32,12 @@ This causes a readability issue in both the visualized clusters as well as the i
 of the graph. This graph feature can be referred to as "messiness".
 
 Hypothesis:
-Messiness is a predictor for 0-graphs.
+Messiness is a predictor for 0-graphs (and vice versa).
 
 Explanation:
 Messiness implies that there is a sizeable overlap of actors within different movies.
 It also implies a higher number of actors per movie since movies with small casts cannot be messy. 
 In that sense, the messiness feature is closely connected to the size-of-cast feature hypothesized
-before.
+in notes.txt.
 It's also worth noting that just looking through the visualized graphs, shows that
 1-label graphs are quite clean and 0-label graphs are quite messy.
