@@ -124,10 +124,11 @@ class ModifyGraph:
 
                 break
 
-    def removeActors(self, actors, see_change=False, dir=None):
+    def removeActors(self, actors, visualize=True, see_change=False, dir=None):
         assert (see_change and dir is not None) or (not see_change and dir is None)
 
-        explain(self, see_change=see_change, dir=dir) # if see_change=false, just regular save; if true, then save starting graph
+        if visualize:
+            explain(self, see_change=see_change, dir=dir) # if see_change=false, just regular save; if true, then save starting graph
 
         # make sure list of actors is descending, since removing actors messes with the indices
         actors.sort(reverse=True)

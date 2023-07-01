@@ -1,50 +1,40 @@
 from symmetricGraph import SymmetricGraph
 from modifyGraphs import ModifyGraph
-from calculateMovie import movie, model
 from utility import loadDataset, explain
-import copy
 
-# TEST-CASES:
-graphs = []
-approximate = False
+# HOW TO USE:
+##########################
+# 1. CHOOSE GRAPH:
 
-graph = ModifyGraph(SymmetricGraph(2, 4, 1))
-graphs.append(graph)
-explain(graph)
-print(graph.movies)
+# Either choose graph from dataset:
+dataset = loadDataset()
+graph1 = dataset[0]
+graph1 = ModifyGraph(graph1)
 
-if approximate:
-    for graph in graphs:
-        pred = model(graph.x, graph.edge_index).item()
+# Or create own symmetric graph
+graph2 = ModifyGraph(SymmetricGraph(2, 5, 1))
 
-        approximation = 0
-        for m in graph.movies:
-            degree = len(m)-1
-            approximation += movie[degree]
+#########################
+# 2. VISUALIZE THE GRAPH 
+# NOTE: it will be saved under "images/graph.png" and overwrite "graph.png"
 
-        approximation /= (len(graph.movies))
+explain(graph2)
 
-        print(f"predict = {pred}")
-        print(f"approx  = {approximation}")
-        print("------------")
+#########################
+# 3. MODIFY THE GRAPH AS YOU LIKE:
+# NOTE: Please reference the node/actor values seen in graph.png!
 
-"""
-graphs.append(sg(4, 3, 1))
-graphs.append(sg(2, 4, 1))
-graphs.append(sg(8, 5, 1))
-graphs.append(sg(10, 6, 1))
-graphs.append(sg(4, 7, 1))
-graphs.append(sg(5, 8, 1))
-graphs.append(sg(6, 9, 1))
-graphs.append(sg(7, 10, 1))
-graphs.append(sg(9, 11, 1))
-graphs.append(sg(3, 12, 1))
+graph2.removeEdge(actor1=1, actor2=2) # removes edge from actor1 to actor2
+graph2.removeActors([3, 5], visualize=False) # removes actors with values 3 and 5 from the graph
+graph2.addActorsToMovie(add=3, actor=1, visualize=False) # adds 3 actors to the movie that actor=1 is in
 
-for graph in graphs:
-    pred = model(graph.x, graph.edge_index).item()
-    approximation = movie[graph.cast] # in this case approx = val because all movies have same cast
+#########################
+# 4. VISUALIZE THE MODIFIED GRAPH:
+# NOTE: This will overwrite the previous graph and replace "graph.png". 
+#       Best debug this file in VSC and open "graph.png" to the side, to actually see the change.
 
-    print(f"predict = {pred}")
-    print(f"approx  = {approximation}")
-    print("------------")
-"""
+explain(graph2)
+
+#########################
+# 5. OPTIONAL: PRINT THE IMPLICIT MOVIES PRESENT IN THE GRAPH:
+# print(graph2.movies)

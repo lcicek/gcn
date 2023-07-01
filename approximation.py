@@ -1,45 +1,44 @@
 from utility import loadDataset, loadModel
 from modifyGraphs import ModifyGraph
 from calculateMovie import movie
-from random import randrange
 
-def approximate(graph):
+def calculateApproximation(graph, label=False):
     messiness, overlap = calculateMessiness(graph)
 
-    if overlap == 0: # one movie graph can be approximated easily
-        approx = movie[graph.num_actors]
-        if approx > 0.5:
-            return 1
+    if overlap == 0: # one movie graph predictions are fixed, so it's the most important feature if present
+        if label:
+            return 1 if movie[graph.num_actors] > 0.5 else 0
         else:
-            return 0
-    elif overlap == 1: # graph can be approximated if size of cast doesn't vary too much
+            return movie[graph.num_actors]
+    elif messiness > 1: # high messiness is predictor for 0
+        return 0
+    elif messiness < 0.3: # low messiness is predictor for 1
+        return 1
+    elif overlap == 1: # single central node graph can be roughly approximated 
         approx = 0
         for m in graph.movies:
             approx += movie[len(m)]
 
         approx /= graph.num_movies
 
-        if approx > 0.5:
-            return 1
-        else:
-            return 0
-    elif messiness > 0.7: # messiness predictor for 0
-        return 0
-    elif messiness < 0.3: # cleanness predictor for 1
-        return 1
-    else: # if we arrive here, we are uncertain about the prediction
+        if label:
+            if approx > 0.5:
+                approx = 1
+            else:
+                approx = 0
+
+        return approx
+    else: # if all else fails, just used number of actors as a rough estimate
         return 0 if graph.num_actors > 25 else 1
 
 def calculateMessiness(graph):
     # higher overlap => higher messiness
     overlap = findOverlap(graph)
-    overlap_weight = overlap / graph.num_movies
+    overlap_weight = overlap / graph.num_movies # always between 0 and 1
 
-    # higher number of movies => slightly higher messiness
-    movie_weight = graph.num_movies / 135 # 135 = max num_movies
-
-    # higher cast => higher messiness
-    cast_weight = averageCast(graph) / 135
+    # increase messiness if number of movie and size of cast is high
+    movie_weight = graph.num_movies / 136
+    cast_weight = averageCast(graph) / 136
 
     messiness = overlap_weight + movie_weight + cast_weight
 
@@ -70,27 +69,58 @@ def findOverlap(graph): # finds how many actors are in at least two movies
     
     return overlap
 
-model = loadModel()
-accuracy = 0
-dataset = loadDataset()
-for i in range(150):
-    graph = dataset[i]
-    label, _ = model.evaluate(graph.x, graph.edge_index, batch=None)
+def calculateAccuracy(graphs, model, tolerance, label=False):
+    accuracy = 0
+    for i in range(0, 150):
+        graph = graphs[i]
 
-    graph = ModifyGraph(graph)
-    approx_label = approximate(graph)
+        if label:
+            pred, _ = model.evaluate(graph.x, graph.edge_index, batch=None)
+        else:
+            pred = model(graph.x, graph.edge_index).item()
 
-    accuracy += (label.item() == approx_label)
+        graph = ModifyGraph(graph)
+        approx = calculateApproximation(graph, label=label)
 
-for i in range(850, 1000):
-    graph = dataset[i]
-    label, _ = model.evaluate(graph.x, graph.edge_index, batch=None)
+        correct_approx = 1 if abs(pred - approx) <= tolerance else 0
+        accuracy += correct_approx
     
-    graph = ModifyGraph(graph)
-    approx_label = approximate(graph)
+    return accuracy
 
-    accuracy += (label.item() == approx_label)
+def approximateModel(label=False):
+    """ Calculates how accurately the model's prediction is approximated.
+    An approximation is considered successful if the difference to the prediction
+    is no greater than 0.25. The justification is:
+    A prediction of 0.25 can be understood as a prediction of 0.5 with a halfway
+    nudge towards 0, i.e. the model is not that sure about the prediction but thinks
+    that it's probably a zero.
+    Thus, we would consider an approximation between 0 and 0.5 successful.
+    Similarly, if a prediction is 0.5 (the model is completely uncertain), then any
+    approximation between 0.25 and 0.75 would be considered successful.
+    
+    [ Note: Decreasing this tolerance to 0.15, decreases the accuracy to 0.63. ]
 
-accuracy /= 300
+    With this definition, the approximation is able to achieve an accuracy of 0.77.
+    If we don't approximate the model's prediction but, instead, the model's predicted
+    label, the accuracy of the approximation increases to 0.83.
+    """
 
-print(f"Model can be approximated with probability: {accuracy}")
+    model = loadModel()
+    dataset = loadDataset()
+
+    # use unseen test-set graphs:
+    zero_graphs = dataset[0:150]
+    one_graphs = dataset[850:1000]
+    total_graphs = 300
+
+    accuracy = 0
+    tolerance = 0.25
+    
+    accuracy += calculateAccuracy(zero_graphs, model, tolerance=tolerance, label=label)
+    accuracy += calculateAccuracy(one_graphs, model, tolerance=tolerance, label=label)
+    accuracy /= total_graphs
+
+    print(f"Model can be approximated with probability: {accuracy}")
+
+if __name__ == "__main__":
+    approximateModel()
