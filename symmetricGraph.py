@@ -1,7 +1,22 @@
-from main import *
+from train import *
 
 class SymmetricGraph:
-    def __init__(self, num_movies=4, cast=3, overlap=1): # cast includes overlap actors!
+    """ SymmetricGraph is a graph that can be divided into two equal parts.
+        A SymmetricGraph's movies all have the same cast size and can have zero to cast size
+        overlapping actors.
+        
+        Examples of symmetric graphs:
+        1. Single movie graphs.
+        2. Single central node graph.
+
+        Note: When instantiating a SymmetricGraph, the amount of "overlap" actors (i.e. central
+        nodes) is included in cast. E.g.:
+        SymmetricGraph(num_movies=2, cast=3, overlap=1) would create a graph with one central
+        node connected to two other nodes per movie.
+    """
+
+
+    def __init__(self, num_movies, cast, overlap): # cast includes overlap actors!
         assert num_movies * cast < 136 # don't exceed degree limit found in IMDB-BINARY
         
         self.num_movies = num_movies 
@@ -13,18 +28,18 @@ class SymmetricGraph:
         self.edges = []
         self.y = None
 
-        self.init_movies()
-        self.init_x()
-        self.init_edges()
-        self.init_edge_index()
+        self.initMovies()
+        self.initX()
+        self.initEdges()
+        self.initEdgeIndex()
         
-    def init_movies(self):
+    def initMovies(self):
         unique_per_movie = self.cast - self.overlap
 
         for i in range(self.num_movies):
             movies = []
 
-            for id in range(self.overlap): # overlap actors are in all movies and have unique id between 0 and overlap
+            for id in range(self.overlap): # overlap actors are in all movies and have unique "id" between 0 and overlap
                 movies.append(id)
 
             for k in range(unique_per_movie):
@@ -36,7 +51,7 @@ class SymmetricGraph:
 
         return movies
 
-    def init_x(self): # X contains degree of node (how many actors one actor is connected to)
+    def initX(self): # X contains degree of node (how many actors one actor is connected to)
         self.x = torch.zeros((self.num_actors, 136))
 
         for i in range(self.num_actors):
@@ -47,7 +62,7 @@ class SymmetricGraph:
             
             self.x[i][degree] = 1
     
-    def init_edges(self):
+    def initEdges(self):
         for i in range(self.overlap): # add overlap edges first
             for j in range(i+1, self.num_actors):
                 self.edges.append(torch.tensor([i, j]))
@@ -64,7 +79,7 @@ class SymmetricGraph:
 
         assert len(self.edges) == self.num_edges
 
-    def init_edge_index(self):
+    def initEdgeIndex(self):
         self.edge_index = torch.zeros((self.num_edges, 2), dtype=torch.int64)
 
         for i, edge in enumerate(self.edges):

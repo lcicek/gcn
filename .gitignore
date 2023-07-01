@@ -1,10 +1,6 @@
 __pycache__
 IMDB-BINARY
-saved-models/*
-info.txt
 ignore
 images/*
-explanation.txt
-results
-test-graphs/
-test.py
+results/*
+text-files/*

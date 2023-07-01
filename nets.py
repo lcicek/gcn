@@ -2,7 +2,7 @@ import torch
 from torch.nn import Sigmoid, Dropout
 from torch_geometric.nn import GCNConv, Linear, global_mean_pool
 
-from utility import label, labelDistance
+from utility import label
 
 class GCN(torch.nn.Module):
     def __init__(self):
@@ -30,9 +30,7 @@ class GCN(torch.nn.Module):
         return x
     
     def evaluate(self, x, edge_index, batch):
-        pred = self.forward(x=x, edge_index=edge_index, batch=batch)
-        
-        label_dist = labelDistance(pred)
-        labels = label(pred)
+        preds = self.forward(x=x, edge_index=edge_index, batch=batch)
+        labels = label(preds)
 
-        return labels, label_dist
+        return preds, labels

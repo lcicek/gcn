@@ -12,47 +12,13 @@ actor is connected to each other actor, is straightforward:
 In single movie graphs, the graphs contain no information other than the size of the
 cast. Thus, given a value for cast, the model simply outputs the following values:
 _______________________
-Table of single-movie cast predictions (left: cast value, right: pred):
-30: 1.00
-29: 0.00
-28: 1.00
-27: 1.00
-26: 1.00
-25: 1.00
-24: 1.00
-23: 1.00
-22: 0.00
-21: 1.00
-20: 0.00
-19: 0.53
-18: 0.00
-17: 0.00
-16: 1.00
-15: 0.67
-14: 0.00
-13: 1.00
-12: 0.08
-11: 0.27
-10: 0.98
-9: 0.38
-8: 0.49
-7: 0.84
-6: 0.98
-5: 1.00
-4: 1.00
-3: 1.00
-2: 0.00
-_____________________
+See: calculateMovie.py
 
 In the range [3-7] the model is fairly certain about its prediction, i.e. a low cast
 indicates a 1-label.
-In the range [21+] the model is fairly certain again, i.e. a high cast indicates a 
+In the range [50+] the model is fairly certain again, i.e. a high cast indicates a 
 0-label.
-In the remaining range there is a lot of variance, but the prediction is rarely 
-around 0.5. This indicates that during training, the model could have seen one or two
-instances of movies with cast, say 13 or 16, and inferred that movies with a cast
-of that size must have the label 1 (and vice versa). These inferences are likely inaccurate,
-for which the small size of the dataset could be at fault.
+In the range [7-50]  there is a lot of variance but the tendency is towards label 1.
 _____________________
 
 Single_central_node_graphs (i.e a graph with one actor who appears in several movies with
