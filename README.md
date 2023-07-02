@@ -35,7 +35,7 @@ To visualize and/or modify graphs, change working directory to project directory
 Visualized graphs are saved under images/graph.png. For more information please read instructions in ```test.py```.
 ### Custom graph class
 Opposed to IMDB-BINARY dataset graphs, the custom graphs also contain:
-- Node features ```x```.
+- Node features ```x``` containing the degree of nodes.
 - Edges ```edges``` of shape [2, num_edges].
 - A list of ```movies``` implicit in the graph. Each movie contains all actors with an edge between each other.
 - Functions ```removeActors()```, ```addActorsToMovie()``` and ```removeEdge()``` to modify graphs.
