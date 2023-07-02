@@ -31,16 +31,16 @@ explain(graph)
 # 3. MODIFY THE GRAPH AS YOU LIKE:
 # NOTE: It's easier to modify the graph if you reference the node (/actor) values seen in graph.png.
 
-graph.removeEdge(1, 2)
-graph.removeActors([3, 5], visualize=False)
-graph.addActorsToMovie(add=3, actor=1, visualize=False)
+#graph.removeEdge(1, 2)
+#graph.removeActors([3, 5], visualize=False)
+#graph.addActorsToMovie(add=3, actor=1, visualize=False)
 
 #########################
 # 4. VISUALIZE THE MODIFIED GRAPH:
 # NOTE: Best debug this file in VSC and open "graph.png" to the side if you want to see the change.
-explain(graph)
+#explain(graph)
 
 # Alternatively, you can specify see_change = True in graph.removeActors() or graph.addActorsToMovie(). 
 # The graphs and corresponding prediction values will be saved in a new image directory in "results".
-dir = createNewImageDirectory()
-graph.addActorsToMovie(5, see_change=True, dir=dir)
+#dir = createNewImageDirectory()
+#graph.addActorsToMovie(5, see_change=True, dir=dir)

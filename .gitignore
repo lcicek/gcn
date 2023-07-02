@@ -1,5 +1,7 @@
 __pycache__
 IMDB-BINARY
 ignore
-images/*
-results/*
+results/messiness
+results/reduction
+results/remove-low-1
+results/remove-low-2
