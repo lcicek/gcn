@@ -26,6 +26,7 @@ graph = Graph(graph2)
 # NOTE: Graph visualizations with less than four nodes might be empty.
 
 explain(graph)
+print("Graph visualization saved to images/graph.png")
 
 #########################
 # 3. MODIFY THE GRAPH AS YOU LIKE:
