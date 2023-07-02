@@ -8,8 +8,9 @@ This project was run with Python 3.11.3 under Windows 10 (64-bit). Dependencies 
 1. Install [miniconda](https://docs.conda.io/en/latest/miniconda.html).
 2. Create conda environment with:
    ```conda create --name imdb-gcn python=3.11.3```
-3. Activate conda environment: ```conda activate imdb-gcn```
-4. Install [PyTorch](https://pytorch.org/) in activated conda environment. At the time of writing, we used the following command to install PyTorch version 2.0.1:
+   Note: On Windows you can enter all of these commands in the Anaconda prompt (see [conda docs](https://conda.io/projects/conda/en/latest/user-guide/getting-started.html#starting-conda)).
+4. Activate conda environment: ```conda activate imdb-gcn```
+5. Install [PyTorch](https://pytorch.org/) in activated conda environment. At the time of writing, we used the following command to install PyTorch version 2.0.1:
    ```
    conda install pytorch torchvision torchaudio cpuonly -c pytorch
    ```
@@ -23,6 +24,7 @@ This project was run with Python 3.11.3 under Windows 10 (64-bit). Dependencies 
    python -m pip install -U pip
    python -m pip install -U matplotlib
    ```
+9. Optional: Change to project folder and open environment in Visual Studio Code by typing the command ```code``` in the Anaconda Prompt.
 ## Documentation
 ### Results
 To replicate our results, run one of the following commands:
