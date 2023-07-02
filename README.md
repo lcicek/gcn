@@ -9,7 +9,7 @@ This project was run with Python 3.11.3 under Windows 10 (64-bit). Dependencies 
 2. Create conda environment with:
    ```conda create --name imdb-gcn python=3.11.3```
 3. Activate conda environment: ```conda activate imdb-gcn```
-4. Install [PyTorch](https://pytorch.org/) in activated conda environment. We used the following command to install PyTorch version 2.0.1:
+4. Install [PyTorch](https://pytorch.org/) in activated conda environment. At the time of writing, we used the following command to install PyTorch version 2.0.1:
    ```
    conda install pytorch torchvision torchaudio cpuonly -c pytorch
    ```
