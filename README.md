@@ -1,5 +1,5 @@
 # Explaining and approximating a graph convolutional network trained on the IMDB-BINARY dataset
-The GCN trained on IMDB-BINARY achieves an accuracy of 0.73. Using a custom graph class ```graph.py``` to access implicit properties in graphs from the IMDB-BINARY dataset enables an explanation and approximation of the GCN model as well as a direct classification accuracy of 0.71 on the dataset.
+The GCN trained on IMDB-BINARY achieves an accuracy of up to 0.76. Using a custom graph class ```graph.py``` to access implicit properties in graphs from the IMDB-BINARY dataset enables an explanation and approximation of the GCN model as well as a direct classification accuracy of 0.71 on the dataset.
 
 ## Setup
 ### Requirements
