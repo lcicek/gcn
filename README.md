@@ -31,7 +31,7 @@ To replicate our results, run one of the following commands:
 ### Training
 To train a new model, run: ```python main.py -train```
 ### Test
-To visualize and/or modify graphs, run: ```python test.py```
+To visualize and/or modify graphs, change working directory to project directory and run: ```python test.py```
 Visualized graphs are saved under images/graph.png. For more information please read instructions in ```test.py```.
 ### Custom graph class
 Opposed to IMDB-BINARY dataset graphs, the custom graphs also contain:
