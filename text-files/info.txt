@@ -1,0 +1,15 @@
+Model Accuracy: 0.73 | LD: 0.18 | FP: 0.14 | FN: 0.13
+Model Accuracy: 0.73 | LD: 0.19 | FP: 0.18 | FN: 0.09
+Model Accuracy: 0.74 | LD: 0.17 | FP: 0.15 | FN: 0.11
+Model Accuracy: 0.73 | LD: 0.17 | FP: 0.15 | FN: 0.12
+Model Accuracy: 0.72 | LD: 0.17 | FP: 0.10 | FN: 0.19
+Model Accuracy: 0.73 | LD: 0.17 | FP: 0.19 | FN: 0.08
+Model Accuracy: 0.74 | LD: 0.19 | FP: 0.19 | FN: 0.07
+Model Accuracy: 0.71 | LD: 0.19 | FP: 0.14 | FN: 0.14
+Model Accuracy: 0.75 | LD: 0.17 | FP: 0.17 | FN: 0.08
+Model Accuracy: 0.73 | LD: 0.20 | FP: 0.15 | FN: 0.12
+
+Avg. Accuracy: 0.73
+50 Epochs
+_________________________________
+
