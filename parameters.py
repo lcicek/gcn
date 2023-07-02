@@ -4,6 +4,7 @@ LEARNING_RATE = 0.02
 
 P_THRESHOLD = 0.5 # probability threshold
 
+FINAL_MODEL_PATH = "saved-models/final_model.pt"
 MODEL_PATH = "saved-models/model.pt"
 FEATURE_IMG_PATH = "images/feature-importance.png"
 GRAPH_PATH = "images/graph.png"

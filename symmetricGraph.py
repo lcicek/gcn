@@ -1,4 +1,4 @@
-from train import *
+from main import *
 
 class SymmetricGraph:
     """ SymmetricGraph is a graph that can be divided into two equal parts.

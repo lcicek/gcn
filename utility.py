@@ -6,7 +6,7 @@ from torch_geometric.utils import degree
 from torch_geometric.explain import Explainer, GNNExplainer
 from PIL import Image, ImageDraw, ImageFont
 
-from parameters import P_THRESHOLD, EPOCHS, FEATURE_IMG_PATH, GRAPH_PATH, RESULTS_FOLDER, EXPLANATION_FILE
+from parameters import *
 
 # Taken from: https://github.com/pyg-team/pytorch_geometric/blob/master/benchmark/kernel/datasets.py
 # Found in: https://github.com/pyg-team/pytorch_geometric/discussions/3334
@@ -85,11 +85,19 @@ def printLabelBalance(loader):
 
     print(f'Dataset training-graphs: zero({len(loader.dataset) - sum}), one({sum})')
 
-def loadModel():
+def loadModel(final=True):
+    """ Loads and returns saved model.
+        If final=False is specified, model saved under saved-models/model.pt will be loaded.
+    """
+    
     from nets import GCN
 
     model = GCN()
-    model.load_state_dict(torch.load("saved-models/final_model.pt"))
+    if final:
+        model.load_state_dict(torch.load(FINAL_MODEL_PATH))
+    else:
+        model.load_state_dict(torch.load(MODEL_PATH))
+
     model.eval()
 
     return model

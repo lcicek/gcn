@@ -6,6 +6,16 @@ from nets import GCN
 from parameters import *
 from utility import *
 
+def evaluateFinalModel():
+    model = loadModel(final=True)
+    print(f"Evaluating {FINAL_MODEL_PATH}...")
+    modelAccuracy(model, test_loader, save=False)
+
+def evaluateModel():
+    model = loadModel(final=False)
+    print(f"Evaluating {MODEL_PATH}...")
+    modelAccuracy(model, test_loader, save=False)
+
 def prepareLoaders(dataset):
     """See https://pytorch-geometric.readthedocs.io/en/latest/modules/loader.html#torch_geometric.loader.DataLoader"""
 
@@ -67,7 +77,7 @@ def modelAccuracy(model, test_loader, save=False):
     return avg_acc
 
 # Regular training is performed, stats are logged and model is saved.
-def saveModel():
+def trainAndSaveModel():
     model, optimizer = prepareTraining()
 
     trainingLoop(model, train_loader, optimizer)
@@ -98,7 +108,10 @@ def testModelAccuracy():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('-test', action='store_true')  
+    parser.add_argument('-evalFinal', action='store_true')    
+    parser.add_argument('-evalTrained', action='store_true')
+    parser.add_argument('-test', action='store_true')   
+    parser.add_argument('-train', action='store_true')   
     args = parser.parse_args()
 
     # global variables
@@ -106,7 +119,13 @@ if __name__ == "__main__":
     train_loader, test_loader = prepareLoaders(dataset)
     loss_function = torch.nn.BCELoss()
 
-    if args.test:
+    if args.evalFinal:
+        evaluateFinalModel()
+    elif args.evalTrained:
+        evaluateModel()
+    elif args.train:
+        trainAndSaveModel()
+    elif args.test:
         testModelAccuracy()
     else:
-        saveModel()
+        print("No arguments were specified. Please run this file with the correct flags (see documentation).")
