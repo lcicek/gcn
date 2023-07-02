@@ -59,7 +59,7 @@ def modelAccuracy(model, test_loader, save=False):
 
     if save:
         file = open(INFO_FILE, "a")
-        file.write(f'Model Accuracy: {avg_acc:.2f}')
+        file.write(f'\nModel Accuracy: {avg_acc:.2f}')
         file.close()
     else:
         print(f'Model Accuracy: {avg_acc:.2f}')
